@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "raytrace.h"
+#include "raytracer.h"
 
 static int	ft_read_to_list(int fd, t_list **img_l, t_data *d)
 {

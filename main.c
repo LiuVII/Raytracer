@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "raytrace.h"
+#include "raytracer.h"
 #include <stdio.h>
 #include <time.h>
 #include <signal.h>
@@ -31,7 +31,7 @@ int		ft_displayit(t_data *d)
 void	ft_puterr_msg(int err)
 {
 	if (err == -1)
-		ft_putendl("usage: .fractol/ $(param)");
+		ft_putendl("usage: ./rtv1 $(param)");
 	else if (err == -2)
 		ft_putendl("error: mlx initializing failed");
 	else if (err == -3)
@@ -51,7 +51,6 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	int i;
 	int j;
 
-	destroy_txtr(d);
 	(d && d->mlx && d->win) ? mlx_destroy_window(d->mlx, d->win) : 0;
 	i = -1;
 	if (d && d->img)
@@ -74,43 +73,21 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	(err >= 0) ? exit(0) : exit(1);
 }
 
-void	data_init(t_data *d, char *map_name)
+void	data_init(t_data *d)
 {
 	d->img = NULL;
-	d->run = 0;
 	d->oz.x = 0;
 	d->oz.y = 0;
-	d->jump_v = 0;
-	d->min_dist = PP_SCL;
 	d->phi = 0;
-	d->teta = 0;
-	if (ft_strcmp(map_name, "maps/0") == 0)
-	{
-		d->plrc.x = 0 + GR_S / 2;
-		d->plrc.y = 0 + GR_S / 2;
-	}
-	if (ft_strcmp(map_name, "maps/1") == 0)
-	{
-		d->plrc.x = GR_S + GR_S / 2;
-		d->plrc.y = 2 * GR_S + GR_S / 2;
-	}
-	else if (ft_strcmp(map_name, "maps/medium") == 0)
-	{
-		d->plrc.x = GR_S + GR_S / 2;
-		d->plrc.y = 22 * GR_S + GR_S / 2;
-	}		
+	d->teta = 0;	
 	d->param = 0;
-	d->plrc.z = PP_CY;
-	d->vwan.y = M_PI / 4;
-	d->vwan.x = 0;
-	load_txtr(d);
 }
 
 int		main(int argc, char **argv)
 {
 	t_data *d;
 
-	if (!(argc > 1 && argv[1]))
+	if (!(argc == 1 && argv[0]))
 	{
 		ft_puterr_msg(-1);
 		return (1);
@@ -122,11 +99,42 @@ int		main(int argc, char **argv)
 	}
 	if (!(d->mlx = mlx_init()))
 		ft_free_n_exit(d, NULL, NULL, -2);
-	if (!(d->win = mlx_new_window(d->mlx, XS, YS, argv[1])))
+	if (!(d->win = mlx_new_window(d->mlx, XS, YS, "RTv1")))
 		ft_free_n_exit(d, NULL, NULL, -3);
-	data_init(d, argv[1]);
+	data_init(d);
+	//config
+	{
+		d->depth = 1;
+		d->pos.x = XS / 3;
+		d->pos.y = YS / 2;
+		d->pos.z = -YS;
+		d->vwp.x = XS / 2;
+		d->vwp.y = YS / 2;
+		d->vwp.z = 0;	
+		d->max_dist = 100000;
+		d->nshp = 1;
+		d->nlght = 1;
+		d->shps = (t_shp*)malloc(sizeof(t_shp) * d->nshp);
+		d->lght = (t_lght*)malloc(sizeof(t_lght) * d->nlght);
+	// //make sphere
+		d->shps[0].id = 1;
+		d->shps[0].o.x = XS / 3;
+		d->shps[0].o.y = (YS * 2) / 3;
+		d->shps[0].o.z = (YS * 2) / 3;
+		d->shps[0].l = YS / 2;
+		d->shps[0].mu.x = 0.5;
+		d->shps[0].mu.y = 0;
+		d->shps[0].mu.z = 0;	
+	// //make light
+		d->lght[0].o.x = (XS * 2) / 3;
+		d->lght[0].o.y = YS / 3;
+		d->lght[0].o.z = YS / 2;
+		d->lght[0].spctr.x = 255;
+		d->lght[0].spctr.y = 255;
+		d->lght[0].spctr.z = 255;		
+	}
 	//ft_read(argv[1], d);
-	display_controls();
+	// display_controls();
 	mlx_loop_hook(d->mlx, ft_displayit, d);
 	mlx_loop(d->mlx);
 	return (0);

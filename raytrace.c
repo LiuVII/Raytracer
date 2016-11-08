@@ -10,16 +10,35 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "raytrace.h"
+#include "raytracer.h"
+#include <stdio.h>
 
 t_3di	intersect(t_data *d, t_3di p1, t_3di p2, int n)
 {
-	t_3di p
+	t_3di	p;
+	double	ratio;
+	t_3di	a;
+	t_3di	b;
 
-	p.x = -1;
-	p.y = -1;
-	p.z = -1;
-	              
+	p = v_isop(p1, -1, '=');
+	a = v_id2v(p1, d->shps[n].o);
+	b = v_id2v(p1, p2);
+	ratio = 0;
+	if (d->shps[n].id == 1 && v_imodsq(b) > 0) 
+	{
+		printf("a: %.2f b: %.2f ab: %.2d |", v_imod(a), v_imod(b), v_iscal(a, b));
+		if (SQ(d->shps[n].l) >
+		(ratio = v_imodsq(a) - SQ(v_iscal(a, b) / v_imodsq(b))))
+		{
+			ratio = (v_iscal(a, b) / v_imodsq(b) -
+				sqrt((SQ(d->shps[n].l) - ratio) / v_imodsq(b)));
+			p = v_ivop(p1, v_isop(b, ratio, '*'), '*');
+		}
+	}
+	// else if (d->shps[n].id == 0)
+	// {
+	// 	ratio = 1 - v_iscal(v_id2v(d->shps[n].o, p2), v_ivop())
+	// }             
 	return (p);
 }
 
@@ -27,32 +46,25 @@ t_3di	cast_shadray(t_data *d, t_3di p1, t_lght lght, int depth)
 {
 	int		i;
 	double 	min_dist;
-	double	dist
 	t_3di	p;
 
 	i = -1;
-	*n = -1;
 	min_dist = d->max_dist;
 	while (++i < d->nshp)
 	{
 		if ((p = intersect(d, lght.o, p1, i)).x != -1
 			/*&& (dist = distance(d->pos, p)) < min_dist*/)
 			if (depth == 1) 
-			{
-				p.x = 0;
-				p.y = 0;
-				p.z = 0;
-				return(p);
-			}
+				return(v_isop(p, 0, '='));
 	}
-	return (light.spctr);
+	return (lght.spctr);
 }
 
 t_3di	cast_primray(t_data *d, t_3di p1, int *n)
 {
 	int		i;
 	double 	min_dist;
-	double	dist
+	double	dist;
 	t_3di	p;
 
 	i = -1;
@@ -60,9 +72,11 @@ t_3di	cast_primray(t_data *d, t_3di p1, int *n)
 	min_dist = d->max_dist;
 	while (++i < d->nshp)
 	{
+		// printf("%s", "1");
 		if ((p = intersect(d, d->pos, p1, i)).x != -1 
-			&& (dist = distance(d->pos, p)) < min_dist)
+			&& (dist = sqrt(v_imodsq(v_id2v(d->pos, p)))) < min_dist)
 		{
+			printf("%s", "2");
 			min_dist = dist;
 			*n = i;
 		}
@@ -76,25 +90,52 @@ void	raytrace(t_data *d)
 	t_3di	p;
 	int		n;
 	int 	i;
+	t_3d	b;
+	t_3d	ox;
+	t_3d	oy;
 	t_3di	col;
 	t_3di	colinc;
 
 	p1.y = -1;
+	b = v_i2d(v_id2v(d->pos, d->vwp));
+	if (b.z != -1 && v_dmodsq(b) != 0)
+	{
+		b = v_dsop(b, 1 / sqrt(v_dmodsq(b)), '*');
+		ox.x = (1.0 - SQ(b.x) / (1.0 + b.z));
+		ox.y = -(b.y * b.x) / (1.0 + b.z);
+		ox.z = -b.x;
+		oy.x = -(b.y * b.x) / (1.0 + b.z);
+		oy.y = 1.0 - SQ(b.y) / (1.0 + b.z);
+		oy.z = -b.y;
+	}
+	else
+	{
+		ox.x = -1;
+		ox.y = 0;
+		ox.z = 0;
+		oy.x = 0;
+		oy.y = 1;
+		oy.z = 0;
+	}
 	while (++p1.y < YS && (p1.x = -1))
 		while (++p1.x < XS && (i = -1))
 		{
-			col = 0;
-			p = cast_primray(d, p1, &n);
-			while (++i < d->nlght)
-			{
-				colinc = cast_shadray(d, p, d->lght[i], 1);
-				col.x = col.x + colinc.x * (1 - d->shp[n].mu.x);
-				col.x = (col.x > 255) ? 255: col.x;
-				col.y = col.y + colinc.y * (1 - d->shp[n].mu.y);
-				col.y = (col.y > 255) ? 255: col.y;
-				col.z = col.z + colinc.z * (1 - d->shp[n].mu.z);
-				col.z = (col.z > 255) ? 255: col.z;
-			}
+			printf("\n\n");
+			col = v_isop(col, 0, '=');
+			b = v_dvop(v_dsop(ox, (p1.x - XS / 2), '*'), v_dsop(oy, (p1.y - YS / 2), '*'), '+');
+			p = cast_primray(d, v_ivop(d->vwp, v_d2i(b), '+'), &n);
+			if (p.x > 0)
+				while (++i < d->nlght)
+				{
+					printf("%d\n", i);
+					colinc = cast_shadray(d, p, d->lght[i], 1);
+					col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
+					col.x = (col.x > 255) ? 255: col.x;
+					col.y = col.y + colinc.y * (1 - d->shps[n].mu.y);
+					col.y = (col.y > 255) ? 255: col.y;
+					col.z = col.z + colinc.z * (1 - d->shps[n].mu.z);
+					col.z = (col.z > 255) ? 255: col.z;
+				}
 			draw_pixel(d, p1.x, p1.y, (col.x << 16) + (col.y << 8) + col.z);
 		}
 }

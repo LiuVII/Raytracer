@@ -73,11 +73,10 @@ typedef struct	s_3di
 typedef struct	s_shp
 {
 	int			id;
-	t_3d		o;
+	t_3di		o;
 	t_3d		ang;
 	int			l;
 	int			h;
-	double		fov;
 	int			color;
 	t_3d		mu;
 	double		n;
@@ -85,8 +84,7 @@ typedef struct	s_shp
 
 typedef struct	s_lght
 {
-	int			id;
-	t_3d		o;
+	t_3di		o;
 	t_3d		ang;
 	t_3di		spctr;
 	int			l;
@@ -109,8 +107,8 @@ typedef struct	s_img
 typedef struct	s_data
 {
 	int			depth;
-	t_3d		pos;
-	t_2d		vwan;
+	t_3di		pos;
+	t_3di		vwp;
 	double		fov;
 	t_3d		***img;
 	t_3d		img_size;
@@ -133,7 +131,6 @@ typedef struct	s_data
 	double		ang;
 	int			endian;
 	int			mevent;
-	int			run;
 }				t_data;
 
 void			display_controls(void);

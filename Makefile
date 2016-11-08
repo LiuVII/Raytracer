@@ -17,7 +17,9 @@ FUNCS		+=	main.c\
 				read.c\
 				draw.c\
 				process.c\
-				raytrace.c
+				raytrace.c\
+				vect_dmath.c\
+				vect_imath.c\
 
 OBJS		=	$(addprefix $(OBJS_DIR), $(FUNCS:.c=.o))
 

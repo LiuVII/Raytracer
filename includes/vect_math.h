@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   raytracer.h                                        :+:      :+:    :+:   */
+/*   vect_math.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mfilipch <mfilipch@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,27 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RAYTRACER_H
-# define RAYTRACER_H
-# include "window.h"
-# include "vect_math.h"
+#ifndef VECT_MATH_H
+# define VECT_MATH_H
 
-# define SQ(x) (x * x)
-# define FOV (M_PI / 3.0)
-# define GR_S 256
-# define PP_DST (XS / 2.0 / tan(FOV / 2.0))
-# define ANIX (FOV / (double)XS)
-# define ANIY (FOV / (double)YS)
-# define PP_CX (XS / 2)
-# define PP_CY (YS / 2)
-# define PP_SCL sqrt(XS * XS + YS * YS)
-# define TEXT_S GR_S
-
-void			jump(t_data *d);
-int				draw_win(t_data *d);
-void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
-void			draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img);
-void			load_txtr(t_data *d);
-void			destroy_txtr(t_data *d);
+double	v_imod(t_3di p);
+double	v_imodsq(t_3di p);
+t_3di	v_isop(t_3di p1, double x, char c);
+t_3di	v_ivop(t_3di p1, t_3di p2, char c);
+int		v_iscal(t_3di p1, t_3di p2);
+t_3di	v_id2v(t_3di p1, t_3di p2);
+double	v_dmod(t_3d p);
+double	v_dmodsq(t_3d p);
+t_3d	v_dsop(t_3d p1, double x, char c);
+t_3d	v_dvop(t_3d p1, t_3d p2, char c);
+int		v_dscal(t_3d p1, t_3d p2);
+t_3d	v_dd2v(t_3d p1, t_3d p2);
+t_3d	v_i2d(t_3di pi);
+t_3di	v_d2i(t_3d pd);
 
 #endif

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "raytrace.h"
+#include "raytracer.h"
 
 void	display_controls(void)
 {
