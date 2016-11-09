@@ -76,7 +76,7 @@ t_3di	v_ivop(t_3di p1, t_3di p2, char c)
 	return (p);
 }
 
-int		v_iscal(t_3di p1, t_3di p2)
+double	v_iscal(t_3di p1, t_3di p2)
 {
 	return (p1.x * p2.x + p1.y * p2.y + p1.z * p2.z);
 }

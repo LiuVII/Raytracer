@@ -76,7 +76,7 @@ t_3d	v_dvop(t_3d p1, t_3d p2, char c)
 	return (p);
 }
 
-int		v_dscal(t_3d p1, t_3d p2)
+double	v_dscal(t_3d p1, t_3d p2)
 {
 	return (p1.x * p2.x + p1.y * p2.y + p1.z * p2.z);
 }

@@ -105,7 +105,7 @@ int		main(int argc, char **argv)
 	//config
 	{
 		d->depth = 1;
-		d->pos.x = XS / 3;
+		d->pos.x = XS / 2;
 		d->pos.y = YS / 2;
 		d->pos.z = -YS;
 		d->vwp.x = XS / 2;
@@ -113,25 +113,31 @@ int		main(int argc, char **argv)
 		d->vwp.z = 0;	
 		d->max_dist = 100000;
 		d->nshp = 1;
-		d->nlght = 1;
+		d->nlght = 2;
 		d->shps = (t_shp*)malloc(sizeof(t_shp) * d->nshp);
 		d->lght = (t_lght*)malloc(sizeof(t_lght) * d->nlght);
 	// //make sphere
 		d->shps[0].id = 1;
-		d->shps[0].o.x = XS / 3;
-		d->shps[0].o.y = (YS * 2) / 3;
+		d->shps[0].o.x = XS / 6;
+		d->shps[0].o.y = (YS * 1) / 2;
 		d->shps[0].o.z = (YS * 2) / 3;
-		d->shps[0].l = YS / 2;
-		d->shps[0].mu.x = 0.5;
-		d->shps[0].mu.y = 0;
-		d->shps[0].mu.z = 0;	
+		d->shps[0].l = YS / 6;
+		d->shps[0].mu.x = 0;
+		d->shps[0].mu.y = 0.5;
+		d->shps[0].mu.z = 1;	
 	// //make light
-		d->lght[0].o.x = (XS * 2) / 3;
-		d->lght[0].o.y = YS / 3;
-		d->lght[0].o.z = YS / 2;
-		d->lght[0].spctr.x = 255;
+		d->lght[0].o.x = (XS * 5) / 6;
+		d->lght[0].o.y = (YS * 1) / 3;
+		d->lght[0].o.z = (YS * 2) / 3;
+		d->lght[0].spctr.x = 0;
 		d->lght[0].spctr.y = 255;
-		d->lght[0].spctr.z = 255;		
+		d->lght[0].spctr.z = 0;
+		d->lght[1].o.x = (XS * 1) / 12;
+		d->lght[1].o.y = (YS * 1) / 12;
+		d->lght[1].o.z = (YS * 2) / 3;
+		d->lght[1].spctr.x = 255;
+		d->lght[1].spctr.y = 0;
+		d->lght[1].spctr.z = 0;
 	}
 	//ft_read(argv[1], d);
 	// display_controls();
