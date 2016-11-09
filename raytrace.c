@@ -53,20 +53,29 @@ t_3di	intersect(t_data *d, t_3di p1, t_3di p2, int n)
 t_3di	cast_shadray(t_data *d, t_3di p1, t_lght lght, int depth)
 {
 	int		i;
-	// double 	dist;
+	double 	ratio;
 	t_3di	p;
 
 	i = -1;
 	while (++i < d->nshp)
 	{
 		p = intersect(d, p1, lght.o, i);
+		// if (i == 0)
+		// 		printf(" %d, %d, %d |", p.x, p.y, p.z);
 		if (v_iscal(v_id2v(p1, p), v_id2v(p1, lght.o)) > 0.1 /*&& p.x > 0
 			&& (dist = distance(d->pos, p)) < min_dist*/)
 		{
-			// printf(" %d, %d, %d |", p.x, p.y, p.z);
+			// if (i == 0)
+			// 	printf(" %d, %d, %d |", p.x, p.y, p.z);
 			if (depth == 1) 
 				return(v_isop(p, 0, '='));
 		}
+	}
+	//!LIGHT INTENSITY!
+	ratio = (lght.l * lght.l)  / v_imodsq(v_id2v(p1, lght.o));
+	if (ratio  > 0)
+	{
+		return(v_isop(lght.spctr, (ratio * lght.I), '*')); 
 	}
 	return (lght.spctr);
 }
@@ -77,16 +86,19 @@ t_3di	cast_primray(t_data *d, t_3di p2, int *n)
 	double 	min_dist;
 	double	dist;
 	t_3di	p;
+	t_3di	pi;
 
 	i = -1;
 	*n = -1;
+	pi = d->pos;
 	min_dist = d->max_dist;
 	while (++i < d->nshp)
 	{
 		p = intersect(d, d->pos, p2, i);
 		if (v_imodsq(v_id2v(d->pos, p)) > 0.1)
 		{
-			
+			// if (*n == 0)
+			// 	printf(" %d, %d, %d |", p.x, p.y, p.z);
 			// printf(" %d, %d, %d ", p.x, p.y, p.z);
 			// printf(" 1 ");
 			// if (isnan(sqrt(v_imodsq(v_id2v(d->pos, p)))))
@@ -97,11 +109,12 @@ t_3di	cast_primray(t_data *d, t_3di p2, int *n)
 				// printf("2 |");
 				min_dist = dist;
 				*n = i;
+				pi = p;
 			}
 			// printf("|");
 		}
 	}
-	return (p);
+	return (pi);
 }
 
 void	raytrace(t_data *d)
@@ -142,7 +155,7 @@ void	raytrace(t_data *d)
 	while (++p1.y < YS && (p1.x = -1))
 		while (++p1.x < XS && (i = -1))
 		{
-			// printf("\n");
+			// printf("\n\n");
 			col = v_isop(col, 0, '=');
 			b = v_dvop(v_dsop(ox, (p1.x - XS / 2), '*'), v_dsop(oy, (p1.y - YS / 2), '*'), '+');
 			// tmp = v_ivop(d->vwp, v_d2i(b), '+');
@@ -152,7 +165,8 @@ void	raytrace(t_data *d)
 			if (n >= 0)
 				while (++i < d->nlght)
 				{
-					// printf(" %d |", n);
+					// printf("\n\n");
+					// printf("sh %d lt %d |", n, i);
 					// colinc.x = 0;
 					colinc = cast_shadray(d, p, d->lght[i], 1);
 					col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
