@@ -71,10 +71,10 @@ t_3di	cast_shadray(t_data *d, t_3di p1, t_lght lght, int depth)
 				return(v_isop(p, 0, '='));
 		}
 	}
-	//!LIGHT INTENSITY!
-	ratio = (lght.l * lght.l)  / v_imodsq(v_id2v(p1, lght.o));
-	if (ratio  > 0)
+	// !LIGHT INTENSITY!
+	if (v_imodsq(v_id2v(p1, lght.o)) > 0 && (ratio = (lght.l * lght.l)  / v_imodsq(v_id2v(p1, lght.o))))
 	{
+		// printf(" %.f |", ratio * lght.I);
 		return(v_isop(lght.spctr, (ratio * lght.I), '*')); 
 	}
 	return (lght.spctr);
@@ -117,6 +117,48 @@ t_3di	cast_primray(t_data *d, t_3di p2, int *n)
 	return (pi);
 }
 
+t_3di	add_gloss(t_data *d, t_3di p, t_lght lght, int num)
+{
+	t_3di	a;
+	t_3di	c;
+	t_3di	b;
+	t_3di	nm;
+	double	eps;
+	double 	ratio;
+
+	a = v_id2v(p, d->pos);
+	b = v_id2v(p, lght.o);
+	nm = v_id2v(d->shps[num].o, p);
+	// eps = (v_imodsq(b) * v_imodsq(nm) > 0.001) ? lght.l / 2 * sqrt(1 - SQ(v_iscal(b, nm)) / v_imodsq(b) / v_imodsq(nm)) : lght.l / 2; 
+	eps = lght.l;
+	// if (ABS(ABS(v_iscal(a, nm) / v_imod(a)) - ABS(v_iscal(b, nm) / v_imod(b))) < eps &&
+	// 	ABS(v_iscal(v_ivop(a, b, '*'), nm) / v_imod(v_ivop(a, b, '*'))) < 2 * eps)
+	c = v_ivop(v_isop(a, 1, '*'), v_isop(b, v_imod(a) / v_imod(b), '*'), '+');
+	// printf("%d %d %d |", c.x , c.y, c.z);
+	ratio = (v_imodsq(c) * v_imodsq(nm) > 0.001) ? v_iscal(c, nm) / v_imod(c) / v_imod(nm) : 0;
+	if (ratio > 0.95)
+	{
+		// printf(" %.f ", ratio);
+		// ratio = 1;
+		eps = (v_imodsq(b) * v_imodsq(nm) > 0.001) ? v_iscal(b, nm) / v_imod(b) / v_imod(nm) : 0;
+		ratio = 2.0 * eps / (eps + sqrt(SQ(d->shps[num].n) - 1 + SQ(eps))) - 1;
+		eps = 2.0 * SQ(d->shps[num].n) * eps / (eps + sqrt(SQ(d->shps[num].n) - 1 + SQ(eps))) - 1;
+		// ratio = 1;
+		// eps = 1;
+		ratio = exp((v_iscal(c, nm) / v_imod(c) / v_imod(nm) - 1.0) / 0.03) / (4 * M_PI * 0.03) * lght.I * (SQ(ratio) + SQ(eps)) / 2.0 * ((v_imodsq(b) > 0) ? (lght.l * lght.l) / v_imodsq(b) : 1);
+		// ratio = (SQ(2.0 * eps / (eps + sqrt(SQ(d->shps[num].n) - 1 + SQ(eps))) - 1) +
+			// SQ(2.0 * SQ(d->shps[num].n) * eps / (eps + sqrt(SQ(d->shps[num].n) - 1 + SQ(eps))) - 1)) / 2.0;
+		// b = v_isop(lght.spctr, (ratio * lght.I), '*');
+		// printf("%.2f %d %d %d |", ratio, b.x , b.y, b.z);
+		// printf(" %.f |", ratio * lght.I);
+		return (v_isop(lght.spctr, (ratio), '*'));
+	}
+	// else
+			// printf("a %.f a", ABS(ABS(v_iscal(v_id2v(p, d->pos), nm)) - ABS(v_iscal(b, nm))));
+	return (v_isop(p, 0, '='));
+}
+
+
 void	raytrace(t_data *d)
 {
 	t_3di	p1;
@@ -128,6 +170,7 @@ void	raytrace(t_data *d)
 	t_3d	oy;
 	t_3di	col;
 	t_3di	colinc;
+	t_3di	colgl;
 	// t_3di 	tmp;
 
 	p1.y = -1;
@@ -165,10 +208,14 @@ void	raytrace(t_data *d)
 			if (n >= 0)
 				while (++i < d->nlght)
 				{
+					colgl = v_isop(colgl, 0, '=');
 					// printf("\n\n");
 					// printf("sh %d lt %d |", n, i);
 					// colinc.x = 0;
 					colinc = cast_shadray(d, p, d->lght[i], 1);
+					if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
+						colgl = add_gloss(d, p, d->lght[i], n);
+					col = v_ivop(col, colgl, '+');
 					col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
 					col.x = (col.x > 255) ? 255 : col.x;
 					col.y = col.y + colinc.y * (1 - d->shps[n].mu.y);
