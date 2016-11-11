@@ -74,6 +74,7 @@ typedef struct	s_shp
 {
 	int			id;
 	t_3di		o;
+	t_3di		nm;
 	t_3d		ang;
 	int			l;
 	int			h;
