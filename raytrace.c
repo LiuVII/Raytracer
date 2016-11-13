@@ -61,17 +61,17 @@ t_3di	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 	nm = v_i2d(v_id2v(shp.o, shp.nm));
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
-	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(dp, v_dsop(nm, v_dscal(dp, nm), '*'), '-'));
+	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'));
 	a = v_dmodsq(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'));
-	c = v_dmodsq(v_dvop(dp, v_dsop(nm, v_dscal(dp, nm), '*'), '-')) - SQ(shp.l);
+	c = v_dmodsq(v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-')) - SQ(shp.l);
 	ratio = 0;
 	// printf(" %.2f %.2f %.2f |", a, b, c);
-	if (a > 0.001 && (ratio = SQ(b) - 4 * a * c) > 0.001)
+	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
-		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2 / a;
-		// if (ratio > 0)
-		// 	printf(" %.2f |", ratio);
-		// ratio = (ratio > 0) ? ratio : 0;
+		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
+		if (ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1)
+			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
+		ratio = (ratio > 0) ? ratio : 0;
 	}
 	return (v_d2i(v_dsop(v, ratio, '*')));
 }
@@ -122,10 +122,14 @@ t_3di	cast_shadray(t_data *d, t_3di p1, t_lght lght, int depth)
 			if (depth == 1) 
 				return(v_isop(p, 0, '='));
 		}
+		// else if (d->shps[i].id == 2 && p1.x < XS / 7 && v_imodsq(v_id2v(p1, p)) != 0)
+		// 	printf(" %d %d %.f %.f |", v_id2v(p1, p).x, v_id2v(p1, p).y, v_imod(v_id2v(p1, p)), v_iscal(v_id2v(p1, p), v_id2v(p1, lght.o)));
+
 	}
 	// !LIGHT INTENSITY!
 	if (v_imodsq(v_id2v(p1, lght.o)) > 0 && (ratio = (lght.l * lght.l)  / v_imodsq(v_id2v(p1, lght.o))))
 	{
+		// printf(" %d %d %d |", p1.x, p1.y, p1.z);
 		// printf(" %.f |", ratio * lght.I);
 		return(v_isop(lght.spctr, (ratio * lght.I), '*')); 
 	}
@@ -180,6 +184,13 @@ t_3di	add_gloss(t_3di a, t_3di p, t_lght lght, t_shp shp)
 	b = v_id2v(p, lght.o);
 	if (shp.id == 1)
 		nm = v_id2v(shp.o, p);
+	else if (shp.id == 2)
+	{
+		nm = v_id2v(shp.o, shp.nm);
+		// nm = v_dsop(v_i2d(nm), 1 / v_imod(nm), '*');
+		nm = v_d2i(v_dvop(v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), v_dvop(v_i2d(v_id2v(shp.o, p)), v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), '*'), '*'));
+		// printf(" %d %d %d |", nm.x , nm.y, nm.z);
+	}
 	else
 		nm = v_id2v(shp.o, shp.nm);
 	// eps = (v_imodsq(b) * v_imodsq(nm) > 0.001) ? lght.l / 2 * sqrt(1 - SQ(v_iscal(b, nm)) / v_imodsq(b) / v_imodsq(nm)) : lght.l / 2; 
@@ -267,8 +278,8 @@ void	raytrace(t_data *d)
 					// printf("sh %d lt %d |", n, i);
 					// colinc = v_isop(colinc, 120, '=');
 					colinc = cast_shadray(d, p, d->lght[i], 1);
-					// if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
-					// 	colgl = add_gloss(v_id2v(p, d->pos), p, d->lght[i], d->shps[n]);
+					if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
+						colgl = add_gloss(v_id2v(p, d->pos), p, d->lght[i], d->shps[n]);
 					col = v_ivop(col, colgl, '+');
 					col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
 					col.x = (col.x > 255) ? 255 : col.x;

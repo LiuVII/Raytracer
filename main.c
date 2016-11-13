@@ -115,7 +115,7 @@ int		main(int argc, char **argv)
 		d->vwp.z = 0;	
 		d->max_dist = 100000;
 		d->nshp = 5 - sh;
-		d->nlght = 3;
+		d->nlght = 2;
 		d->shps = (t_shp*)malloc(sizeof(t_shp) * d->nshp);
 		d->lght = (t_lght*)malloc(sizeof(t_lght) * d->nlght);
 	// //make sphere
@@ -164,14 +164,14 @@ int		main(int argc, char **argv)
 		// d->shps[3 - sh].n = 1;
 		d->shps[4 - sh].id = 2;
 		d->shps[4 - sh].o.x = XS / 6;
-		d->shps[4 - sh].o.y = (YS * 1) / 2;
-		d->shps[4 - sh].o.z = (YS * 2) / 3;
+		d->shps[4 - sh].o.y = (YS * 3) / 4;
+		d->shps[4 - sh].o.z = (YS * 3) / 4;
 		d->shps[4 - sh].l = XS / 6;
 		d->shps[4 - sh].mu.x = 1;
 		d->shps[4 - sh].mu.y = 0.2;
 		d->shps[4 - sh].mu.z = 0.2;	
-		d->shps[4 - sh].n = 1;
-		d->shps[4 - sh].nm.x = d->shps[4 - sh].o.x;
+		d->shps[4 - sh].n = 1.5;
+		d->shps[4 - sh].nm.x = d->shps[4 - sh].o.x + XS / 20;
 		d->shps[4 - sh].nm.y = d->shps[4 - sh].o.y - YS / 4;
 		d->shps[4 - sh].nm.z = d->shps[4 - sh].o.z;			
 	// //make light
@@ -191,14 +191,14 @@ int		main(int argc, char **argv)
 		d->lght[1].spctr.z = 255;
 		d->lght[1].l = 10;
 		d->lght[1].I = 2000;
-		d->lght[2].o.x = (XS * 1) / 12;
-		d->lght[2].o.y = (YS * 1) / 6;
-		d->lght[2].o.z = (YS * 2) / 3;
-		d->lght[2].spctr.x = 0;
-		d->lght[2].spctr.y = 0;
-		d->lght[2].spctr.z = 0;
-		d->lght[2].l = 10;
-		d->lght[2].I = 700;
+		// d->lght[2].o.x = (XS * 1) / 12;
+		// d->lght[2].o.y = (YS * 1) / 6;
+		// d->lght[2].o.z = (YS * 2) / 3;
+		// d->lght[2].spctr.x = 0;
+		// d->lght[2].spctr.y = 0;
+		// d->lght[2].spctr.z = 0;
+		// d->lght[2].l = 10;
+		// d->lght[2].I = 700;
 	}
 	//ft_read(argv[1], d);
 	// display_controls();
