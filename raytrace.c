@@ -50,6 +50,32 @@ t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
 	return (v_isop(b, 0, '*'));
 }
 
+t_3di	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
+{
+	double	ratio;
+	t_3d	nm;
+	double a;
+	double b;
+	double c;
+
+	nm = v_i2d(v_id2v(shp.o, shp.nm));
+	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
+	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
+	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(dp, v_dsop(nm, v_dscal(dp, nm), '*'), '-'));
+	a = v_dmodsq(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'));
+	c = v_dmodsq(v_dvop(dp, v_dsop(nm, v_dscal(dp, nm), '*'), '-')) - SQ(shp.l);
+	ratio = 0;
+	// printf(" %.2f %.2f %.2f |", a, b, c);
+	if (a > 0.001 && (ratio = SQ(b) - 4 * a * c) > 0.001)
+	{
+		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2 / a;
+		// if (ratio > 0)
+		// 	printf(" %.2f |", ratio);
+		// ratio = (ratio > 0) ? ratio : 0;
+	}
+	return (v_d2i(v_dsop(v, ratio, '*')));
+}
+
 t_3di	intersect(t_data *d, t_3di p1, t_3di p2, int n)
 {
 	t_3di	p;
@@ -62,6 +88,8 @@ t_3di	intersect(t_data *d, t_3di p1, t_3di p2, int n)
 	p = p1;
 	if (d->shps[n].id == 1 && v_imodsq(b) > 0) 
 		p = v_ivop(p1, intsec_sphere(d->shps[n], a, b), '+');         
+	else if (d->shps[n].id == 2)
+		p = v_ivop(p1, intsec_cylinder(d->shps[n], v_i2d(a), v_i2d(b)), '+'); 
 	else if (d->shps[n].id == 0)
 	{
 		p = v_ivop(p1, intsec_map(d->shps[n], a, b), '+');
@@ -239,8 +267,8 @@ void	raytrace(t_data *d)
 					// printf("sh %d lt %d |", n, i);
 					// colinc = v_isop(colinc, 120, '=');
 					colinc = cast_shadray(d, p, d->lght[i], 1);
-					if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
-						colgl = add_gloss(v_id2v(p, d->pos), p, d->lght[i], d->shps[n]);
+					// if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
+					// 	colgl = add_gloss(v_id2v(p, d->pos), p, d->lght[i], d->shps[n]);
 					col = v_ivop(col, colgl, '+');
 					col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
 					col.x = (col.x > 255) ? 255 : col.x;
