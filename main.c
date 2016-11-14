@@ -105,7 +105,7 @@ int		main(int argc, char **argv)
 	//config
 	{
 		int sh;
-		sh = 4;
+		sh = 5;
 		d->depth = 1;
 		d->pos.x = (XS) / 2;
 		d->pos.y = YS / 2;
@@ -114,7 +114,7 @@ int		main(int argc, char **argv)
 		d->vwp.y = YS / 2;
 		d->vwp.z = 0;	
 		d->max_dist = 100000;
-		d->nshp = 5 - sh;
+		d->nshp = 6 - sh;
 		d->nlght = 2;
 		d->shps = (t_shp*)malloc(sizeof(t_shp) * d->nshp);
 		d->lght = (t_lght*)malloc(sizeof(t_lght) * d->nlght);
@@ -162,18 +162,31 @@ int		main(int argc, char **argv)
 		// d->shps[3 - sh].nm.z = d->shps[3 - sh].o.z - YS / 2;
 		// d->shps[3 - sh].l = 2 * YS;
 		// d->shps[3 - sh].n = 1;
-		d->shps[4 - sh].id = 2;
-		d->shps[4 - sh].o.x = XS / 6;
-		d->shps[4 - sh].o.y = (YS * 3) / 4;
-		d->shps[4 - sh].o.z = (YS * 3) / 4;
-		d->shps[4 - sh].l = XS / 6;
-		d->shps[4 - sh].mu.x = 1;
-		d->shps[4 - sh].mu.y = 0.2;
-		d->shps[4 - sh].mu.z = 0.2;	
-		d->shps[4 - sh].n = 1.5;
-		d->shps[4 - sh].nm.x = d->shps[4 - sh].o.x + XS / 20;
-		d->shps[4 - sh].nm.y = d->shps[4 - sh].o.y - YS / 4;
-		d->shps[4 - sh].nm.z = d->shps[4 - sh].o.z;			
+		// d->shps[4 - sh].id = 2;
+		// d->shps[4 - sh].o.x = XS / 6;
+		// d->shps[4 - sh].o.y = (YS * 3) / 4;
+		// d->shps[4 - sh].o.z = (YS * 3) / 4;
+		// d->shps[4 - sh].l = XS / 6;
+		// d->shps[4 - sh].mu.x = 1;
+		// d->shps[4 - sh].mu.y = 0.2;
+		// d->shps[4 - sh].mu.z = 0.2;	
+		// d->shps[4 - sh].n = 1.5;
+		// d->shps[4 - sh].nm.x = d->shps[4 - sh].o.x - XS / 20;
+		// d->shps[4 - sh].nm.y = d->shps[4 - sh].o.y - YS / 4;
+		// d->shps[4 - sh].nm.z = d->shps[4 - sh].o.z;
+		d->shps[5 - sh].id = 3;
+		d->shps[5 - sh].o.x = XS / 6;
+		d->shps[5 - sh].o.y = (YS * 1) / 2;
+		d->shps[5 - sh].o.z = (YS * 3) / 4;
+		d->shps[5 - sh].l = XS / 12;
+		d->shps[5 - sh].h = XS / 6;
+		d->shps[5 - sh].mu.x = 1;
+		d->shps[5 - sh].mu.y = 0.2;
+		d->shps[5 - sh].mu.z = 0.2;	
+		d->shps[5 - sh].n = 1.5;
+		d->shps[5 - sh].nm.x = d->shps[5 - sh].o.x;
+		d->shps[5 - sh].nm.y = d->shps[5 - sh].o.y - YS / 4;
+		d->shps[5 - sh].nm.z = d->shps[5 - sh].o.z;					
 	// //make light
 		d->lght[0].o.x = XS / 2;
 		d->lght[0].o.y = YS / 2;
