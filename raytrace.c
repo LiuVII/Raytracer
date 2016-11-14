@@ -41,7 +41,8 @@ t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
 	t_3di	nm;
 
 	ratio = 0;
-	nm = v_id2v(shp.o, shp.nm);
+	// nm = v_id2v(shp.o, shp.nm);
+	nm = shp.nm;
 	if (ABS(v_iscal(b, nm)) > 0.01)
 	{
 		if ((ratio = (v_iscal(a, nm) / v_iscal(b, nm))) > 0)
@@ -58,7 +59,8 @@ t_3di	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 	double b;
 	double c;
 
-	nm = v_i2d(v_id2v(shp.o, shp.nm));
+	nm = v_i2d(shp.nm);
+	// nm = v_i2d(v_id2v(shp.o, shp.nm));
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
 	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'));
@@ -84,7 +86,8 @@ t_3di	intsec_cone(t_shp shp, t_3d dp, t_3d v)
 	double b;
 	double c;
 
-	nm = v_i2d(v_id2v(shp.o, shp.nm));
+	nm = v_i2d(shp.nm);
+	// nm = v_i2d(v_id2v(shp.o, shp.nm));
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
 	ratio = (double)SQ(shp.h) / (SQ(shp.h) + SQ(shp.l));
@@ -219,23 +222,27 @@ t_3di	add_gloss(t_3di a, t_3di p, t_lght lght, t_shp shp)
 		nm = v_id2v(shp.o, p);
 	else if (shp.id == 2)
 	{
-		nm = v_id2v(shp.o, shp.nm);
+		// nm = v_id2v(shp.o, shp.nm);
+		nm = shp.nm;
 		// nm = v_dsop(v_i2d(nm), 1 / v_imod(nm), '*');
 		nm = v_d2i(v_dvop(v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), v_dvop(v_i2d(v_id2v(shp.o, p)), v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), '*'), '*'));
 		// printf(" %d %d %d |", nm.x , nm.y, nm.z);
 	}
 	else if (shp.id == 3)
 	{
-		ratio = SIGN(v_iscal(v_id2v(shp.o, shp.nm), v_id2v(p, shp.o)));
-		nm = v_isop(v_id2v(shp.o, shp.nm), ratio, '*');
+		// ratio = SIGN(v_iscal(v_id2v(shp.o, shp.nm), v_id2v(p, shp.o)));
+		// nm = v_isop(v_id2v(shp.o, shp.nm), ratio, '*');
+		ratio = SIGN(v_iscal(shp.nm, v_id2v(p, shp.o)));
+		nm = v_isop(shp.nm, ratio, '*');
 		// nm = v_dsop(v_i2d(nm), 1 / v_imod(nm), '*');
 		nm = v_d2i(v_dvop(v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), v_dvop(v_i2d(v_id2v(shp.o, p)), v_dsop(v_i2d(nm), 1 / v_imod(nm), '*'), '*'), '*'));
-		nm = v_ivop(v_isop(v_isop(v_id2v(shp.o, shp.nm), ratio, '*'), v_imod(nm) * shp.l / shp.h / v_imod(v_id2v(shp.o, shp.nm)), '*'), nm, '+');
+		nm = v_ivop(v_isop(v_isop(shp.nm, ratio, '*'), v_imod(nm) * shp.l / shp.h / v_imod(shp.nm), '*'), nm, '+');
 		// printf(" %d %d %d |", nm.x , nm.y, nm.z);
 		
 	}
 	else
-		nm = v_id2v(shp.o, shp.nm);
+		nm = shp.nm;
+		// nm = v_id2v(shp.o, shp.nm);
 	// eps = (v_imodsq(b) * v_imodsq(nm) > 0.001) ? lght.l / 2 * sqrt(1 - SQ(v_iscal(b, nm)) / v_imodsq(b) / v_imodsq(nm)) : lght.l / 2; 
 	eps = lght.l;
 	// if (ABS(ABS(v_iscal(a, nm) / v_imod(a)) - ABS(v_iscal(b, nm) / v_imod(b))) < eps &&
