@@ -26,7 +26,10 @@
 # define PP_SCL sqrt(XS * XS + YS * YS)
 # define TEXT_S GR_S
 
-void			jump(t_data *d);
+void			raytrace(t_data *d);
+int				ft_rec_data(t_data *d, char **t_l, int row, int j);
+t_3di			add_gloss(t_3di a, t_3di p, t_lght lght, t_shp shp);
+t_3di			intersect(t_data *d, t_3di p1, t_3di p2, int n);
 int				draw_win(t_data *d);
 void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
 void			draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img);

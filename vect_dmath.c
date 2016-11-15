@@ -12,19 +12,9 @@
 
 #include "window.h"
 
-double	v_dmodsq(t_3d p)
-{
-	return(p.x * p.x + p.y * p.y + p.z * p.z);
-}
-
-double	v_dmod(t_3d p)
-{
-	return(sqrt(p.x * p.x + p.y * p.y + p.z * p.z));
-}
-
 t_3d	v_dsop(t_3d p1, double x, char c)
 {
-	t_3d p;
+	t_3d	p;
 
 	p.x = 0;
 	p.y = 0;
@@ -40,7 +30,7 @@ t_3d	v_dsop(t_3d p1, double x, char c)
 		p.x = p1.x * x;
 		p.y = p1.y * x;
 		p.z = p1.z * x;
-	}	
+	}
 	else if (c == '=')
 	{
 		p.x = x;
@@ -52,7 +42,7 @@ t_3d	v_dsop(t_3d p1, double x, char c)
 
 t_3d	v_dvop(t_3d p1, t_3d p2, char c)
 {
-	t_3d p;
+	t_3d	p;
 
 	p = v_dsop(p1, 0, '=');
 	if (c == '+')
@@ -66,7 +56,7 @@ t_3d	v_dvop(t_3d p1, t_3d p2, char c)
 		p.x = p1.x - p2.x;
 		p.y = p1.y - p2.y;
 		p.z = p1.z - p2.z;
-	}	
+	}
 	else if (c == '*')
 	{
 		p.x = p1.y * p2.z - p1.z * p2.y;
@@ -83,12 +73,12 @@ double	v_dscal(t_3d p1, t_3d p2)
 
 t_3d	v_dd2v(t_3d p1, t_3d p2)
 {
-	return(v_dvop(p2, p1, '-'));
+	return (v_dvop(p2, p1, '-'));
 }
 
 t_3d	v_i2d(t_3di pi)
 {
-	t_3d pd;
+	t_3d	pd;
 
 	pd.x = pi.x;
 	pd.y = pi.y;

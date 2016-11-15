@@ -18,6 +18,10 @@ FUNCS		+=	main.c\
 				draw.c\
 				process.c\
 				raytrace.c\
+				intersection.c\
+				effects.c\
+				rec_data.c\
+				vect_dist.c\
 				vect_dmath.c\
 				vect_imath.c\
 
