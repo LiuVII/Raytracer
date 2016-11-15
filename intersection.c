@@ -70,9 +70,24 @@ t_3di	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
-		if (ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1)
+		if ((ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1))
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
-		ratio = (ratio > 0) ? ratio : 0;
+		(ratio < 0) ? ratio = 0 : 0;
+		//check caps
+		b = -v_dscal(dp, nm);
+		a = v_dscal(v_dsop(v, ratio, '*'), nm) + b;
+		if ((a < 0 || a > shp.h))
+		{
+			ratio = 0;
+			if ((b < 0 || b > shp.h) && ABS(v_dscal(v, nm)) > 0.01)
+			{
+				if (b > shp.h)
+					dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '+');
+				ratio = v_dscal(dp, nm) / v_dscal(v, nm);
+				if (v_dmodsq(v_dvop(v_dsop(v, ratio, '*'), dp, '-')) > shp.l * shp.l)
+					ratio = 0;
+			}
+		}
 	}
 	return (v_d2i(v_dsop(v, ratio, '*')));
 }
@@ -103,7 +118,21 @@ t_3di	intsec_cone(t_shp shp, t_3d dp, t_3d v)
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
 		if (ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1)
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
-		ratio = (ratio > 0) ? ratio : 0;
+		(ratio < 0) ? ratio = 0 : 0;
+		//check caps
+		b = v_dscal(dp, nm);
+		a = b - v_dscal(v_dsop(v, ratio, '*'), nm);
+		if (a < 0 || a > shp.h)
+		{
+			ratio = 0;
+			if (b > shp.h && ABS(v_dscal(v, nm)) > 0.01)
+			{
+				dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '-');
+				ratio = v_dscal(dp, nm) / v_dscal(v, nm);
+				if (v_dmodsq(v_dvop(v_dsop(v, ratio, '*'), dp, '-')) > shp.l * shp.l)
+					ratio = 0;
+			}
+		}
 	}
 	return (v_d2i(v_dsop(v, ratio, '*')));
 }
