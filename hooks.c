@@ -21,6 +21,17 @@ int	ft_close(t_data *d)
 int	ft_key_hook(int keycode, t_data *d)
 {
 	(keycode == KEY_ESC) ? ft_free_n_exit(d, NULL, NULL, 0) : 0;
+	(keycode == KEY_UP) ? d->pos.y -= 50 : 0;
+	(keycode == KEY_DOWN) ? d->pos.y += 50 : 0;
+	(keycode == KEY_LEFT) ? d->pos.x -= 50 : 0;
+	(keycode == KEY_RIGHT) ? d->pos.x += 50 : 0;
+	(keycode == KEY_4) ? d->pos.z += 50 : 0;
+	(keycode == KEY_1) ? d->pos.z -= 50 : 0;
+	(keycode == KEY_7) ? d->phi += 0.05 : 0;
+	(keycode == KEY_8) ? d->phi -= 0.05 : 0;
+	(keycode == KEY_5) ? d->teta -= 0.05 : 0;
+	(keycode == KEY_2) ? d->teta += 0.05 : 0;
+	raytrace(d);
 	return (0);
 }
 

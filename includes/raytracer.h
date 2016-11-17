@@ -28,8 +28,10 @@
 
 void			raytrace(t_data *d);
 int				ft_rec_data(t_data *d, char **t_l, int row, int j);
+double			cap_cylinder(t_shp shp, t_3d dp, t_3d v, double ratio);
+double			cap_cone(t_shp shp, t_3d dp, t_3d v, double ratio);
 t_3di			add_gloss(t_3di a, t_3di p, t_lght lght, t_shp shp);
-t_3di			intersect(t_data *d, t_3di p1, t_3di p2, int n);
+t_3d			intersect(t_data *d, t_3d p1, t_3d p2, int n);
 int				draw_win(t_data *d);
 void			draw_3dmap(t_data *d, t_3d p1, double dist, double nesw);
 void			draw_line_im(t_data *d, t_3d p1, t_3d p2, t_img img);

@@ -124,6 +124,7 @@ typedef struct	s_data
 	double		max_dist;
 	double		phi;
 	double		teta;
+	double		psi;
 	double		dist;
 	t_2d		oz;
 	int			param;

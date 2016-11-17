@@ -13,25 +13,20 @@
 #include "raytracer.h"
 #include <stdio.h>
 
-t_3di	intsec_sphere(t_shp shp, t_3di a, t_3di b)
+t_3d	intsec_sphere(t_shp shp, t_3d a, t_3d b)
 {
 	double	ratio;
 
 	ratio = 0;
-	if (SQ(shp.l) > (ratio = v_imodsq(a) - SQ(v_iscal(a, b)) / v_imodsq(b)))
+	if (SQ(shp.l) > (ratio = v_dmodsq(a) - SQ(v_dscal(a, b)) / v_dmodsq(b)))
 	{
-		// printf(" %.f %.f %.2f |", v_iscal(a, b), v_imodsq(b), v_iscal(a, b) / v_imodsq(b));
-		// if (v_iscal(a, b) < 0)
-		// 	printf(" 1x %d 1y %d 1z %d, 2x %d, 2y %d, 2z %d\n", p1.x, p1.y, p1.z, p2.x, p2.y, p2.z);
-			// printf(" ax %d ay %d az %d, bx %d, by %d, bz %d\n", a.x, a.y, a.z, b.x, b.y, b.z);
-		ratio = (v_iscal(a, b) / v_imodsq(b) -
-			sqrt((SQ(shp.l) - ratio) / v_imodsq(b)));
+		ratio = (v_dscal(a, b) / v_dmodsq(b) -
+			sqrt((SQ(shp.l) - ratio) / v_dmodsq(b)));
 		if (ABS(ratio) < 0.1)
-			ratio = 2 * v_iscal(a, b) / v_imodsq(b);
-		// printf(" %.2f |", ratio);
-		return (v_isop(b, ratio, '*'));
+			ratio = 2 * v_dscal(a, b) / v_dmodsq(b);
+		return (v_dsop(b, ratio, '*'));
 	}
-	return (v_isop(b, 0, '*'));
+	return (v_dsop(b, 0, '*'));
 }
 
 t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
@@ -40,7 +35,6 @@ t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
 	t_3di	nm;
 
 	ratio = 0;
-	// nm = v_id2v(shp.o, shp.nm);
 	nm = shp.nm;
 	if (ABS(v_iscal(b, nm)) > 0.01)
 	{
@@ -50,119 +44,82 @@ t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
 	return (v_isop(b, 0, '*'));
 }
 
-t_3di	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
+t_3d	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 {
 	double	ratio;
 	t_3d	nm;
-	double a;
-	double b;
-	double c;
+	double	a;
+	double	b;
+	double	c;
 
 	nm = v_i2d(shp.nm);
-	// nm = v_i2d(v_id2v(shp.o, shp.nm));
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
-	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
-	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'));
+	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'),
+		v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'));
 	a = v_dmodsq(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'));
 	c = v_dmodsq(v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-')) - SQ(shp.l);
 	ratio = 0;
-	// printf(" %.2f %.2f %.2f |", a, b, c);
 	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
 		if ((ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1))
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
-		(ratio < 0) ? ratio = 0 : 0;
-		//check caps
-		// b = -v_dscal(dp, nm);
-		// a = v_dscal(v_dsop(v, ratio, '*'), nm) + b;
-		// if ((a < 0 || a > shp.h))
-		// {
-			b = -v_dscal(dp, nm);
-			a = v_dscal(v_dsop(v, ratio, '*'), nm) + b;
-			c = 0;
-			if (/*(b < 0 || b > shp.h) &&*/ ABS(v_dscal(v, nm)) > 0.01)
-			{
-				if (b > shp.h || a > shp.h)
-					dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '+');
-				c = v_dscal(dp, nm) / v_dscal(v, nm);
-				if (v_dmodsq(v_dvop(v_dsop(v, c, '*'), dp, '-')) > shp.l * shp.l)
-					c = 0;
-			}
-		if ((a < 0 || a > shp.h) || (ABS(c) > 0.01 && ABS(c) < ABS(ratio)))
-			ratio = c;			
+		ratio = (ratio < 0) ? 0 : cap_cylinder(shp, dp, v, ratio);
 	}
-	return (v_d2i(v_dsop(v, ratio, '*')));
+	return ((v_dsop(v, ratio, '*')));
 }
 
-t_3di	intsec_cone(t_shp shp, t_3d dp, t_3d v)
+t_3d	intsec_cone(t_shp shp, t_3d dp, t_3d v)
 {
 	double	ratio;
 	t_3d	nm;
-	double a;
-	double b;
-	double c;
+	double	a;
+	double	b;
+	double	c;
 
 	nm = v_i2d(shp.nm);
-	// nm = v_i2d(v_id2v(shp.o, shp.nm));
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
-	// printf(" x %d y %d z %d |", nm.x, nm.y, nm.z);
 	ratio = (double)SQ(shp.h) / (SQ(shp.h) + SQ(shp.l));
-	// printf(" %.2f |", ratio);
-	b = 2 * ratio * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'), v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'))
+	b = 2 * ratio * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'),
+		v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'))
 	+ 2 * (1 - ratio) * v_dscal(v, nm) * v_dscal(dp, nm);
-	a = ratio * v_dmodsq(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-')) - (1 - ratio) * SQ(v_dscal(v, nm));
-	c = ratio * v_dmodsq(v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-')) - (1 - ratio) * SQ(v_dscal(dp, nm));
+	a = ratio * v_dmodsq(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-')) -
+	(1 - ratio) * SQ(v_dscal(v, nm));
+	c = ratio * v_dmodsq(v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-')) -
+	(1 - ratio) * SQ(v_dscal(dp, nm));
 	ratio = 0;
-	// printf(" %.2f %.2f %.2f |", a, b, c);
 	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
-		// printf(" %.2f %.2f %.2f |", a, b, c);
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
 		if (ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1)
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
-		(ratio < 0) ? ratio = 0 : 0;
-		//check caps
-		b = v_dscal(dp, nm);
-		a = b - v_dscal(v_dsop(v, ratio, '*'), nm);
-			c= 0;
-			if ((b > shp.h || a > shp.h) && ABS(v_dscal(v, nm)) > 0.01)
-			{
-				dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '-');
-				c = v_dscal(dp, nm) / v_dscal(v, nm);
-				if (v_dmodsq(v_dvop(v_dsop(v, c, '*'), dp, '-')) > shp.l * shp.l)
-					c = 0;
-			}
-		if ((a < 0 || a > shp.h) || (ABS(c) > 0.01 && ABS(c) < ABS(ratio)))
-			ratio = c;
+		ratio = (ratio < 0) ? 0 : cap_cone(shp, dp, v, ratio);
 	}
-	return (v_d2i(v_dsop(v, ratio, '*')));
+	return ((v_dsop(v, ratio, '*')));
 }
 
-t_3di	intersect(t_data *d, t_3di p1, t_3di p2, int n)
+t_3d	intersect(t_data *d, t_3d p1, t_3d p2, int n)
 {
-	t_3di	p;
-	t_3di	a;
-	t_3di	b;
+	t_3d	p;
+	t_3d	a;
+	t_3d	b;
 
-	a = v_id2v(p1, d->shps[n].o);
-	b = v_id2v(p1, p2);
-	// p = v_isop(p1, -1, '=');
+	a = v_dd2v(p1, v_i2d(d->shps[n].o));
+	b = v_dd2v(p1, p2);
 	p = p1;
-	if (d->shps[n].id == 1 && v_imodsq(b) > 0) 
-		p = v_ivop(p1, intsec_sphere(d->shps[n], a, b), '+');         
+	if (d->shps[n].id == 1 && v_dmodsq(b) > 0)
+		p = v_dvop(p1, intsec_sphere(d->shps[n], a, b), '+');
 	else if (d->shps[n].id == 2)
-		p = v_ivop(p1, intsec_cylinder(d->shps[n], v_i2d(a), v_i2d(b)), '+'); 
+		p = v_dvop(p1, intsec_cylinder(d->shps[n], a, b), '+');
 	else if (d->shps[n].id == 3)
-		p = v_ivop(p1, intsec_cone(d->shps[n], v_i2d(a), v_i2d(b)), '+'); 
+		p = v_dvop(p1, intsec_cone(d->shps[n], a, b), '+');
 	else if (d->shps[n].id == 0)
 	{
-		p = v_ivop(p1, intsec_map(d->shps[n], a, b), '+');
-		if (/*v_imod(v_id2v(p, p1)) > d->shps[n].l || */ ABS(d->shps[n].o.x - p.x) > 0.1 * (d->max_dist) ||
-		ABS(d->shps[n].o.y - p.y) > 0.1 * d->max_dist || ABS (d->shps[n].o.z - p.z) > 0.1 * (d->max_dist))
+		p = v_dvop(p1, v_i2d(intsec_map(d->shps[n], v_d2i(a), v_d2i(b))), '+');
+		if (ABS(d->shps[n].o.x - p.x) > 0.1 * (d->max_dist) ||
+		ABS(d->shps[n].o.y - p.y) > 0.1 * d->max_dist ||
+		ABS(d->shps[n].o.z - p.z) > 0.1 * (d->max_dist))
 			p = p1;
-		// else
-		// 	printf(" %d %d %d |", p.x, p.y, p.z);
 	}
 	return (p);
 }

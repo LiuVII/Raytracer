@@ -12,6 +12,55 @@
 
 #include "raytracer.h"
 
+double	cap_cylinder(t_shp shp, t_3d dp, t_3d v, double ratio)
+{
+	t_3d	nm;
+	double	a;
+	double	b;
+	double	c;
+
+	nm = v_i2d(shp.nm);
+	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
+	b = -v_dscal(dp, nm);
+	a = v_dscal(v_dsop(v, ratio, '*'), nm) + b;
+	c = 0;
+	if (ABS(v_dscal(v, nm)) > 0.01)
+	{
+		if (b > shp.h || a > shp.h)
+			dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '+');
+		c = v_dscal(dp, nm) / v_dscal(v, nm);
+		if (v_dmodsq(v_dvop(v_dsop(v, c, '*'), dp, '-')) > shp.l * shp.l)
+			c = 0;
+	}
+	if ((a < 0 || a > shp.h) || (ABS(c) > 0.01 && ABS(c) < ABS(ratio)))
+		return (c);
+	return (ratio);
+}
+
+double	cap_cone(t_shp shp, t_3d dp, t_3d v, double ratio)
+{
+	t_3d	nm;
+	double	a;
+	double	b;
+	double	c;
+
+	nm = v_i2d(shp.nm);
+	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
+	b = v_dscal(dp, nm);
+	a = b - v_dscal(v_dsop(v, ratio, '*'), nm);
+	c = 0;
+	if ((b > shp.h || a > shp.h) && ABS(v_dscal(v, nm)) > 0.01)
+	{
+		dp = v_dvop(dp, v_dsop(nm, shp.h, '*'), '-');
+		c = v_dscal(dp, nm) / v_dscal(v, nm);
+		if (v_dmodsq(v_dvop(v_dsop(v, c, '*'), dp, '-')) > shp.l * shp.l)
+			c = 0;
+	}
+	if ((a < 0 || a > shp.h) || (ABS(c) > 0.01 && ABS(c) < ABS(ratio)))
+		return (c);
+	return (ratio);
+}
+
 t_3di	get_normal(t_shp shp, t_3di p)
 {
 	t_3di	nm;

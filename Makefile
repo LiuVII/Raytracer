@@ -24,6 +24,7 @@ FUNCS		+=	main.c\
 				vect_dist.c\
 				vect_dmath.c\
 				vect_imath.c\
+				ft_trs.c\
 
 OBJS		=	$(addprefix $(OBJS_DIR), $(FUNCS:.c=.o))
 
