@@ -14,8 +14,11 @@
 # define RAYTRACER_H
 # include "window.h"
 # include "vect_math.h"
+# include <pthread.h>
+# include <semaphore.h>
 
 # define SQ(x) (x * x)
+# define THRD_N 4
 # define FOV (M_PI / 3.0)
 # define GR_S 256
 # define PP_DST (XS / 2.0 / tan(FOV / 2.0))

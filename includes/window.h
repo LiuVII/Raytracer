@@ -22,7 +22,7 @@
 # include <math.h>
 
 # define XS 800
-# define YS 600
+# define YS 640
 # define ZS 100
 # define KEY_ESC 53
 # define KEY_UP 126
@@ -113,6 +113,8 @@ typedef struct	s_data
 	double		fov;
 	t_3d		***img;
 	t_3d		img_size;
+	t_3d		ox;
+	t_3d		oy;
 	int			nshp;
 	t_shp		*shps;
 	int			nlght;
@@ -133,6 +135,7 @@ typedef struct	s_data
 	double		ang;
 	int			endian;
 	int			mevent;
+	pthread_t	*pth;
 }				t_data;
 
 void			display_controls(void);

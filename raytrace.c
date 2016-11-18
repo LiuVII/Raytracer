@@ -12,6 +12,9 @@
 
 #include "raytracer.h"
 #include <stdio.h>
+#include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
 
 t_3di	cast_shadray(t_data *d, t_3d p1, t_lght lght, int depth)
 {
@@ -53,6 +56,7 @@ t_3d	cast_primray(t_data *d, t_3d p2, int *n)
 	while (++i < d->nshp)
 	{
 		p = (intersect(d, v_i2d(d->pos), (p2), i));
+		// printf(" %.f |", p.x);
 		if (v_dmodsq(v_dd2v(v_i2d(d->pos), p)) > 0.1)
 		{
 			if ((dist = sqrt(v_dmodsq(v_dd2v(v_i2d(d->pos), p)))) < min_dist)
@@ -74,6 +78,7 @@ t_3di	trace_one(t_data *d, t_3d p, int i, int n)
 
 	col = v_isop(v_d2i(p), 0, '=');
 	p = cast_primray(d, v_dvop(v_i2d(d->vwp), p, '+'), &n);
+	// printf(" %d |", n);
 	if (n >= 0)
 		while (++i < d->nlght)
 		{
@@ -116,23 +121,59 @@ void	rotate_view(t_3d *ox, t_3d *oy, t_3d p)
 	}
 }
 
+void	*trace_thread(void *dt)
+{
+	struct timeval start,finish;
+	double elapsed;
+	t_3di	p1;
+	t_3di	col;
+	pthread_t id;
+	t_data		*d;
+	int 		i;
+
+	d = (t_data*)dt;
+	i = -1;
+	id = pthread_self();
+	while (++i < THRD_N)
+		if (pthread_equal(id, d->pth[i]))
+			break;
+	p1.y = (i * YS) / THRD_N - 1;
+	gettimeofday(&start, NULL);
+	while (++p1.y < ((i + 1) * YS) / THRD_N && (p1.x = - 1))
+		while (++p1.x < XS)
+		{
+			col = trace_one(d, (v_dvop(v_dsop(d->ox, (p1.x - XS / 2), '*')
+				, v_dsop(d->oy, (p1.y - YS / 2), '*'), '+')), -1, -1);
+			draw_pixel(d, p1.x, p1.y, (col.x << 16) + (col.y << 8) + col.z);
+		}	
+	gettimeofday(&finish, NULL);
+	elapsed = (finish.tv_sec - start.tv_sec);
+	elapsed += (finish.tv_usec - start.tv_usec) / 1000000.0;
+	printf("THRD: %d TIME: %.2f\n", i, elapsed);
+	pthread_exit(NULL);
+}
+
+
 void	raytrace(t_data *d)
 {
-	t_3di	p1;
-	t_3d	ox;
-	t_3d	oy;
-	t_3di	col;
+	struct timeval start,finish;
+	double elapsed;
+	int 		i;
 
+	gettimeofday(&start, NULL);
+	printf("\n");
 	(d && d->img_p) ? mlx_destroy_image(d->mlx, d->img_p) : 0;
 	d->img_p = mlx_new_image(d->mlx, XS, YS);
 	d->img_p0 = mlx_get_data_addr(d->img_p, &(d->bpp), &(d->ls), &(d->endian));
-	p1.y = -1;
-	rotate_view(&ox, &oy, ft_tr(d, v_i2d(v_id2v(d->pos, d->vwp))));
-	while (++p1.y < YS && (p1.x = -1))
-		while (++p1.x < XS)
-		{
-			col = trace_one(d, (v_dvop(v_dsop(ox, (p1.x - XS / 2), '*')
-				, v_dsop(oy, (p1.y - YS / 2), '*'), '+')), -1, -1);
-			draw_pixel(d, p1.x, p1.y, (col.x << 16) + (col.y << 8) + col.z);
-		}
+	rotate_view(&(d->ox), &(d->oy), ft_tr(d, v_i2d(v_id2v(d->pos, d->vwp))));
+	i = -1;
+	while (++i < THRD_N)
+		pthread_create(&(d->pth[i]), NULL, trace_thread, (void *)d);
+	i = -1;
+	while (++i < THRD_N)
+		pthread_join(d->pth[i], NULL);
+	gettimeofday(&finish, NULL);	
+	elapsed = (finish.tv_sec - start.tv_sec);
+	elapsed += (finish.tv_usec - start.tv_usec) / 1000000.0;
+	printf("MAIN %.2f\n", elapsed);
 }

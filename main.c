@@ -46,6 +46,7 @@ void	ft_free_n_exit(t_data *d, t_list **img_l, char *line, int err)
 	int j;
 
 	(d && d->img_p) ? mlx_destroy_image(d->mlx, d->img_p) : 0;
+	(d && d->pth) ? free(d->pth) : 0;
 	(d && d->mlx && d->win) ? mlx_destroy_window(d->mlx, d->win) : 0;
 	(d && d->shps) ? free(d->shps) : 0;
 	(d && d->lght) ? free(d->lght) : 0;
@@ -78,6 +79,7 @@ void	data_init(t_data *d)
 	d->teta = 0;
 	d->psi = 0;
 	d->param = 0;
+	d->pth = (pthread_t*)malloc(sizeof(pthread_t) * THRD_N);
 }
 
 int		main(int argc, char **argv)
