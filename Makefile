@@ -55,7 +55,7 @@ OBJS_DIR	=	./build/
 INC_DIR		=	./includes/
 
 CC			=	gcc
-FLAGS		=	-Wall -Werror -Wextra -o2
+FLAGS		=	-Wall -Werror -Wextra -O2 -march=native -funroll-loops
 
 .PHONY: all clean flcean $(NAME) re 
 
