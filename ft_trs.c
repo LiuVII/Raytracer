@@ -22,15 +22,19 @@ t_3d	ft_translate(t_3d p, t_3d tr)
 	return (np);
 }
 
-t_3d	ft_rotate(t_3d p, float phi, float teta, float psi)
+t_3d	ft_rotate_aphi(t_3d p, t_3d a, float phi)
 {
 	t_3d	np;
+	float	scl;
+	float	sq;
+	float	rt;
 
-	np.x = cos(psi) * (cos(teta) * p.x - sin(teta) * (sin(phi) * p.y +
-		cos(phi) * p.z)) - sin(psi) * (cos(phi) * p.y - sin(phi) * p.z);
-	np.y = sin(psi) * (cos(teta) * p.x - sin(teta) * (sin(phi) * p.y +
-		cos(phi) * p.z)) + cos(psi) * (cos(phi) * p.y - sin(phi) * p.z);
-	np.z = sin(teta) * p.x + cos(teta) * (sin(phi) * p.y + cos(phi) * p.z);
+	sq = v_dmod(a);
+	rt = sqrt(sq);
+	scl = (a.x * p.x + a.y * p.y + a.z * p.z) * ((1 - cos(phi))) / sq;
+	np.x = a.x * scl + p.x * cos(phi) + (a.y * p.z - a.z * p.y) * sin(phi) / rt;
+	np.y = a.y * scl + p.y * cos(phi) + (a.z * p.x - a.x * p.z) * sin(phi) / rt;
+	np.z = a.z * scl + p.z * cos(phi) + (a.x * p.y - a.y * p.x) * sin(phi) / rt;
 	return (np);
 }
 
@@ -58,7 +62,28 @@ t_3d	ft_scale(t_3d p, t_3d scale)
 t_3d	ft_tr(t_data *d, t_3d p)
 {
 	t_3d	np;
+	float	ang;
 
-	np = ft_rotate(p, d->phi, d->teta, d->psi);
-	return (np);
+	ang = sqrt(d->length / v_dmodsq(p));
+	p.x *= ang;
+	p.y *= ang;
+	p.z *= ang;
+	ang = d->psi;
+	np = p;
+	d->psi = 0;
+	if (d->phi)
+	{
+		ang = d->phi;
+		np = d->ox;
+		d->phi = 0;
+	}
+	else if (d->teta)
+	{
+		ang = d->teta;
+		np = d->oy;
+		d->teta = 0;
+	}
+	d->ox = ft_rotate_aphi(d->ox, np, ang);
+	d->oy = ft_rotate_aphi(d->oy, np, ang);
+	return (ft_rotate_aphi(p, np, ang));
 }

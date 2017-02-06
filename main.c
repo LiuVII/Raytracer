@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "raytracer.h"
-#include <stdio.h>
 
 int		ft_displayit(t_data *d)
 {
@@ -73,12 +72,16 @@ void	data_init(t_data *d)
 {
 	d->img = NULL;
 	d->img_p = NULL;
-	d->oz.x = 0;
-	d->oz.y = 0;
 	d->phi = 0;
 	d->teta = 0;
 	d->psi = 0;
 	d->param = 0;
+	d->ox.x = 1;
+	d->ox.y = 0;
+	d->ox.z = 0;
+	d->oy.x = 0;
+	d->oy.y = 1;
+	d->oy.z = 0;
 	d->pth = (pthread_t*)malloc(sizeof(pthread_t) * THRD_N);
 }
 
@@ -102,6 +105,8 @@ int		main(int argc, char **argv)
 		ft_free_n_exit(d, NULL, NULL, -3);
 	data_init(d);
 	ft_read(argv[1], d);
+	d->length = v_dmodsq(v_i2d(v_id2v(d->pos, d->vwp)));
+	display_controls();
 	raytrace(d);
 	mlx_expose_hook(d->win, ft_displayit, d);
 	mlx_loop_hook(d->mlx, ft_displayit, d);

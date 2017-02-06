@@ -50,7 +50,7 @@ static void	ft_rec_light(t_data *d, char *elem, int i, int j)
 	(j == 4) ? d->lght[i].spctr.y = ft_atof(elem) : 0;
 	(j == 5) ? d->lght[i].spctr.z = ft_atof(elem) : 0;
 	(j == 6) ? d->lght[i].l = ft_atof(elem) : 0;
-	(j == 7) ? d->lght[i].I = ft_atof(elem) : 0;
+	(j == 7) ? d->lght[i].in = ft_atof(elem) : 0;
 }
 
 int			ft_rec_data(t_data *d, char **t_l, int row, int j)

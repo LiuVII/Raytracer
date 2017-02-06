@@ -35,6 +35,8 @@
 # define KEY_2 84
 # define KEY_7 89
 # define KEY_8 91
+# define KEY_6 88
+# define KEY_3 85
 # define KEY_PLUS 69
 # define KEY_MINUS 78
 # define KEY_E 14
@@ -43,6 +45,9 @@
 # define KEY_SPACE 49
 # define SIGN(x) ((x < 0.0) ? -1.0 : 1.0)
 # define ABS(x) ((x) * SIGN(x))
+# define ANG 0.1
+# define CRA cos(ANG)
+# define SRA sin(ANG)
 
 typedef struct	s_2d
 {
@@ -89,7 +94,7 @@ typedef struct	s_lght
 	t_3d		ang;
 	t_3di		spctr;
 	int			l;
-	int			I;
+	int			in;
 }				t_lght;
 
 typedef struct	s_img
@@ -110,7 +115,7 @@ typedef struct	s_data
 	int			depth;
 	t_3di		pos;
 	t_3di		vwp;
-	double		fov;
+	double		length;
 	t_3d		***img;
 	t_3d		img_size;
 	t_3d		ox;
@@ -128,7 +133,6 @@ typedef struct	s_data
 	double		teta;
 	double		psi;
 	double		dist;
-	t_2d		oz;
 	int			param;
 	int			bpp;
 	int			ls;

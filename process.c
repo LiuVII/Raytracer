@@ -3,34 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   process.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mfilipch <mfilipch@student.42.us.org>       +#+  +:+       +#+       */
+/*   By: mfilipch <mfilipch@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/05 13:41:34 by mfilipch          #+#    #+#             */
-/*   Updated: 2016/11/05 13:41:36 by mfilipch         ###   ########.fr       */
+/*   Created: 2016/10/15 22:00:05 by mfilipch          #+#    #+#             */
+/*   Updated: 2016/10/15 22:00:06 by mfilipch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "raytracer.h"
 
-/*	ft_putstr("\
-____________________________________\n\
-PARAMETERS:\n\
-Mandelbrot Set : 1\n\
-Julia Set      : 2\n\
-Newton Set (mode root or mode iter):\n\
-	z^3-1      : 30 OR 31\n\
-	cosh(z)-1  : 40 OR 41\n\
-	sin(z)     : 50 OR 51\n\n\
-CONTROLS:\n\
-Translation:\n\
-	Y: Key: UP, DOWN\n\
-	X: Key: LEFT, RIGHT\n\n\
-Zoom:\n\
-	IN-OUT : mouse scroll\n\n\
-Center:\n\
-	Mouse click: Btn 2\n\
-____________________________________\n");
-
 void	display_controls(void)
 {
-}*/
+	ft_putstr("\
+____________________________________\n\
+CONTROLS:\n\
+Move camera:\n\
+	Forward, Back: 4, 1\n\
+	Up, down: Key: UP, DOWN\n\
+	Left, Right: Key: LEFT, RIGHT\n\n\
+Rotate camera:\n\
+	OY axis: 5,2\n\
+	OX axis: 6,3\n\
+____________________________________\n");
+}

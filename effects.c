@@ -108,7 +108,7 @@ t_3di	add_gloss(t_3di a, t_3di p, t_lght lght, t_shp shp)
 		ratio = 2.0 * eps / (eps + sqrt(SQ(shp.n) - 1 + SQ(eps))) - 1;
 		eps = 2.0 * SQ(shp.n) * eps / (eps + sqrt(SQ(shp.n) - 1 + SQ(eps))) - 1;
 		ratio = exp((v_iscal(c, nm) / v_imod(c) / v_imod(nm) - 1.0) / 0.03) /
-		(4 * M_PI * 0.03) * lght.I * (SQ(ratio) + SQ(eps)) / 2.0
+		(4 * M_PI * 0.03) * lght.in * (SQ(ratio) + SQ(eps)) / 2.0
 		* ((v_imodsq(b) > 0) ? (lght.l * lght.l) / v_imodsq(b) : 1);
 		return (v_isop(lght.spctr, (ratio), '*'));
 	}

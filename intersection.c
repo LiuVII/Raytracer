@@ -11,37 +11,38 @@
 /* ************************************************************************** */
 
 #include "raytracer.h"
-#include <stdio.h>
 
 t_3d	intsec_sphere(t_shp shp, t_3d a, t_3d b)
 {
 	double	ratio;
 
-	ratio = 0;
-	if (SQ(shp.l) > (ratio = v_dmodsq(a) - SQ(v_dscal(a, b)) / v_dmodsq(b)))
+	ratio = v_dscal(a, b);
+	if (ratio >= 0 &&
+		(SQ(shp.l) > (ratio = v_dmodsq(a) - SQ(ratio) / v_dmodsq(b))))
 	{
 		ratio = (v_dscal(a, b) / v_dmodsq(b) -
 			sqrt((SQ(shp.l) - ratio) / v_dmodsq(b)));
-		if (ABS(ratio) < 0.1)
+		if (ABS(ratio) < 0.01)
 			ratio = 2 * v_dscal(a, b) / v_dmodsq(b);
 		return (v_dsop(b, ratio, '*'));
 	}
 	return (v_dsop(b, 0, '*'));
 }
 
-t_3di	intsec_map(t_shp shp, t_3di a, t_3di b)
+t_3d	intsec_map(t_shp shp, t_3d a, t_3d b)
 {
 	double	ratio;
-	t_3di	nm;
+	t_3d	nm;
 
 	ratio = 0;
-	nm = shp.nm;
-	if (ABS(v_iscal(b, nm)) > 0.01)
+	nm = v_i2d(shp.nm);
+	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
+	if (ABS(v_dscal(b, nm)) > 0.01)
 	{
-		if ((ratio = (v_iscal(a, nm) / v_iscal(b, nm))) > 0)
-			return (v_isop(b, ratio, '*'));
+		if ((ratio = (v_dscal(a, nm) / v_dscal(b, nm))) > 0)
+			return (v_dsop(b, ratio, '*'));
 	}
-	return (v_isop(b, 0, '*'));
+	return (v_dsop(b, 0, '*'));
 }
 
 t_3d	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
@@ -115,7 +116,7 @@ t_3d	intersect(t_data *d, t_3d p1, t_3d p2, int n)
 		p = v_dvop(p1, intsec_cone(d->shps[n], a, b), '+');
 	else if (d->shps[n].id == 0)
 	{
-		p = v_dvop(p1, v_i2d(intsec_map(d->shps[n], v_d2i(a), v_d2i(b))), '+');
+		p = v_dvop(p1, intsec_map(d->shps[n], a, b), '+');
 		if (ABS(d->shps[n].o.x - p.x) > 0.1 * (d->max_dist) ||
 		ABS(d->shps[n].o.y - p.y) > 0.1 * d->max_dist ||
 		ABS(d->shps[n].o.z - p.z) > 0.1 * (d->max_dist))

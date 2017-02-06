@@ -16,8 +16,6 @@
 # include "vect_math.h"
 # include <pthread.h>
 # include <semaphore.h>
-#include <OpenCL/opencl.h>
-// #include "mykernel.cl.h"
 
 # define SQ(x) (x * x)
 # define THRD_N 4
