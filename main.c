@@ -76,12 +76,6 @@ void	data_init(t_data *d)
 	d->teta = 0;
 	d->psi = 0;
 	d->param = 0;
-	d->ox.x = 1;
-	d->ox.y = 0;
-	d->ox.z = 0;
-	d->oy.x = 0;
-	d->oy.y = 1;
-	d->oy.z = 0;
 	d->pth = (pthread_t*)malloc(sizeof(pthread_t) * THRD_N);
 }
 
@@ -105,7 +99,7 @@ int		main(int argc, char **argv)
 		ft_free_n_exit(d, NULL, NULL, -3);
 	data_init(d);
 	ft_read(argv[1], d);
-	d->length = v_dmodsq(v_i2d(v_id2v(d->pos, d->vwp)));
+	view_setup(d);
 	display_controls();
 	raytrace(d);
 	mlx_expose_hook(d->win, ft_displayit, d);

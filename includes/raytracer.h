@@ -30,6 +30,7 @@
 # define TEXT_S GR_S
 
 void			raytrace(t_data *d);
+void			view_setup(t_data *d);
 int				ft_rec_data(t_data *d, char **t_l, int row, int j);
 double			cap_cylinder(t_shp shp, t_3d dp, t_3d v, double ratio);
 double			cap_cone(t_shp shp, t_3d dp, t_3d v, double ratio);
