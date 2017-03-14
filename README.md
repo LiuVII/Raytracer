@@ -21,11 +21,11 @@ make
 
 After that simply run ./RTv1 with an argument that takes a path to a config file:
 ```
-././RTv1 [path_to_config/config_name]
+./RTv1 [path_to_config/config_name]
 ```
 For example
 ```
-././RTv1 configs/lights_ultimate
+./RTv1 configs/lights_ultimate
 ```
 
 ### Inside the raytracer
