@@ -33,6 +33,8 @@ void	ft_puterr_msg(int err)
 		ft_putendl("error: file opening/reading failed");
 	else if (err == -5)
 		ft_putendl("error: memory allocation failed");
+	else if (err == -6)
+		ft_putendl("error: file close failed");
 	else if (err == -10)
 		ft_putendl("error: invalid config file");
 	else
@@ -76,7 +78,8 @@ void	data_init(t_data *d)
 	d->teta = 0;
 	d->psi = 0;
 	d->param = 0;
-	d->pth = (pthread_t*)malloc(sizeof(pthread_t) * THRD_N);
+	if (!(d->pth = (pthread_t*)malloc(sizeof(pthread_t) * THRD_N)))
+		ft_free_n_exit(d, NULL, NULL, -5);
 }
 
 int		main(int argc, char **argv)

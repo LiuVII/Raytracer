@@ -55,7 +55,7 @@ OBJS_DIR	=	./build/
 INC_DIR		=	./includes/
 
 CC			=	gcc
-FLAGS		=	-Wall -Werror -Wextra -O2 -march=native -funroll-loops
+CFLAGS		=	-Wall -Werror -Wextra -O2 -march=native -funroll-loops
 
 .PHONY: all clean flcean $(NAME) re 
 
@@ -65,7 +65,7 @@ build:
 	@mkdir -p $(OBJS_DIR)
 
 $(OBJS_DIR)%.o: %.c | build
-	@$(CC) $(FLAGS) $(CLNORMFLG) $(LIBINC) $(MLXINC) -I $(INC_DIR) -c $< -o $@
+	@$(CC) $(CFLAGS) $(CLNORMFLG) $(LIBINC) $(MLXINC) -I $(INC_DIR) -c $< -o $@
 
 $(LIB):
 	@make -C ./libft

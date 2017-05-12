@@ -20,7 +20,7 @@
 ** #include <sys/time.h>
 */
 
-t_3di	cast_shadray(t_data *d, t_3d p1, t_lght lght, int depth)
+t_3d	cast_shadray(t_data *d, t_3d p1, t_lght lght, int depth)
 {
 	int		i;
 	double	ratio;
@@ -29,18 +29,18 @@ t_3di	cast_shadray(t_data *d, t_3d p1, t_lght lght, int depth)
 	i = -1;
 	while (++i < d->nshp)
 	{
-		p = intersect(d, p1, v_i2d(lght.o), i);
-		if (v_dscal(v_dd2v(p1, p), v_dd2v(p1, v_i2d(lght.o))) > 0.1 &&
-			v_dmodsq(v_dd2v(p1, p)) <= v_dmodsq(v_dd2v(p1, v_i2d(lght.o))))
+		p = intersect(d, p1, lght.o, i);
+		if (v_dscal(v_dd2v(p1, p), v_dd2v(p1, lght.o)) > 0.1 &&
+			v_dmodsq(v_dd2v(p1, p)) <= v_dmodsq(v_dd2v(p1, lght.o)))
 		{
 			if (depth == 1)
-				return (v_isop(lght.spctr, 0, '='));
+				return (v_dsop(lght.spctr, 0, '='));
 		}
 	}
-	if (v_dmodsq(v_dd2v(p1, v_i2d(lght.o))) > 0 && (ratio = (lght.l * lght.l)
-		/ v_dmodsq(v_dd2v(p1, v_i2d(lght.o)))))
+	if (v_dmodsq(v_dd2v(p1, lght.o)) > 0 && (ratio = (lght.l * lght.l)
+		/ v_dmodsq(v_dd2v(p1, lght.o))))
 	{
-		return (v_isop(lght.spctr, (ratio * lght.in), '*'));
+		return (v_dsop(lght.spctr, (ratio * lght.in), '*'));
 	}
 	return (lght.spctr);
 }
@@ -60,14 +60,14 @@ t_3d	cast_primray(t_data *d, t_3d p2, int *n)
 
 	i = -1;
 	*n = -1;
-	pi = v_i2d(d->pos);
+	pi = d->pos;
 	min_dist = d->max_dist;
 	while (++i < d->nshp)
 	{
-		p = (intersect(d, v_i2d(d->pos), (p2), i));
-		if (v_dmodsq(v_dd2v(v_i2d(d->pos), p)) > 0.1)
+		p = (intersect(d, d->pos, (p2), i));
+		if (v_dmodsq(v_dd2v(d->pos, p)) > 0.1)
 		{
-			if ((dist = sqrt(v_dmodsq(v_dd2v(v_i2d(d->pos), p)))) < min_dist)
+			if ((dist = sqrt(v_dmodsq(v_dd2v(d->pos, p)))) < min_dist)
 			{
 				min_dist = dist;
 				*n = i;
@@ -87,29 +87,29 @@ t_3d	cast_primray(t_data *d, t_3d p2, int *n)
 
 t_3di	trace_one(t_data *d, t_3d p, int i, int n)
 {
-	t_3di	col;
-	t_3di	colinc;
-	t_3di	colgl;
+	t_3d	col;
+	t_3d	colinc;
+	t_3d	colgl;
 
-	col = v_isop(v_d2i(p), 0, '=');
-	p = cast_primray(d, v_dvop(v_i2d(d->vwp), p, '+'), &n);
+	col = v_dsop(p, 0, '=');
+	p = cast_primray(d, v_dvop(d->vwp, p, '+'), &n);
 	if (n >= 0)
 		while (++i < d->nlght)
 		{
-			colgl = v_isop(colgl, 0, '=');
+			colgl = v_dsop(colgl, 0, '=');
 			colinc = cast_shadray(d, (p), d->lght[i], 1);
-			if (d->shps[n].n > 1.01 && v_imodsq(colinc) > 1 && i > 0)
-				colgl = add_gloss(v_id2v(v_d2i(p), d->pos),
-					v_d2i(p), d->lght[i], d->shps[n]);
-			col = v_ivop(col, colgl, '+');
-			col.x = col.x + colinc.x * (1 - d->shps[n].mu.x);
+			if (d->shps[n].n > 1.01 && v_dmodsq(colinc) > 1 && i > 0)
+				colgl = add_gloss(v_dd2v(p, d->pos),
+					p, d->lght[i], d->shps[n]);
+			col = v_dvop(col, colgl, '+');
+			col.x = col.x + colinc.x * (1.0 - d->shps[n].mu.x);
 			col.x = (col.x > 255) ? 255 : col.x;
-			col.y = col.y + colinc.y * (1 - d->shps[n].mu.y);
+			col.y = col.y + colinc.y * (1.0 - d->shps[n].mu.y);
 			col.y = (col.y > 255) ? 255 : col.y;
-			col.z = col.z + colinc.z * (1 - d->shps[n].mu.z);
+			col.z = col.z + colinc.z * (1.0 - d->shps[n].mu.z);
 			col.z = (col.z > 255) ? 255 : col.z;
 		}
-	return (col);
+	return (v_d2i(col));
 }
 
 /*

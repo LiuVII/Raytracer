@@ -20,29 +20,29 @@ int	ft_close(t_data *d)
 
 int	ft_key_hook(int keycode, t_data *d)
 {
-	t_3di	tmp;
+	t_3d	tmp;
 
-	tmp = v_isop(d->pos, 0, '=');
+	tmp = v_dsop(d->pos, 0, '=');
 	(keycode == KEY_ESC) ? ft_free_n_exit(d, NULL, NULL, 0) : 0;
-	(keycode == KEY_UP) ? tmp = v_d2i(v_dsop(d->oy, -100, '*')) : tmp;
-	(keycode == KEY_DOWN) ? tmp = v_d2i(v_dsop(d->oy, 100, '*')) : tmp;
-	(keycode == KEY_LEFT) ? tmp = v_d2i(v_dsop(d->ox, -100, '*')) : tmp;
-	(keycode == KEY_RIGHT) ? tmp = v_d2i(v_dsop(d->ox, 100, '*')) : tmp;
-	(keycode == KEY_4) ? tmp = v_d2i(v_dsop(v_i2d(v_id2v(d->pos, d->vwp)),
-		100 / sqrt(d->length), '*')) : tmp;
-	(keycode == KEY_1) ? tmp = v_d2i(v_dsop(v_i2d(v_id2v(d->pos, d->vwp)),
-		-100 / sqrt(d->length), '*')) : tmp;
+	(keycode == KEY_UP) ? tmp = v_dsop(d->oy, -100, '*') : tmp;
+	(keycode == KEY_DOWN) ? tmp = v_dsop(d->oy, 100, '*') : tmp;
+	(keycode == KEY_LEFT) ? tmp = v_dsop(d->ox, -100, '*') : tmp;
+	(keycode == KEY_RIGHT) ? tmp = v_dsop(d->ox, 100, '*') : tmp;
+	(keycode == KEY_4) ? tmp = v_dsop(v_dd2v(d->pos, d->vwp),
+		100 / sqrt(d->length), '*') : tmp;
+	(keycode == KEY_1) ? tmp = v_dsop(v_dd2v(d->pos, d->vwp),
+		-100 / sqrt(d->length), '*') : tmp;
 	(keycode == KEY_6) ? d->phi = 0.1 : 0;
 	(keycode == KEY_3) ? d->phi = -0.1 : 0;
 	(keycode == KEY_5) ? d->teta = -0.1 : 0;
 	(keycode == KEY_2) ? d->teta = 0.1 : 0;
-	if (v_imodsq(tmp) != 0)
+	if (v_dmodsq(tmp) != 0)
 	{
-		d->pos = v_ivop(d->pos, tmp, '+');
-		d->vwp = v_ivop(d->vwp, tmp, '+');
+		d->pos = v_dvop(d->pos, tmp, '+');
+		d->vwp = v_dvop(d->vwp, tmp, '+');
 	}
-	(d->phi || d->teta || d->psi) ? d->vwp = v_ivop(d->pos,
-		v_d2i(ft_tr(d, v_i2d(v_id2v(d->pos, d->vwp)))), '+') : d->vwp;
+	(d->phi || d->teta || d->psi) ? d->vwp = v_dvop(d->pos,
+		ft_tr(d, v_dd2v(d->pos, d->vwp)), '+') : d->vwp;
 	raytrace(d);
 	return (0);
 }

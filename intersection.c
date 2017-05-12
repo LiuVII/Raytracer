@@ -35,7 +35,7 @@ t_3d	intsec_map(t_shp shp, t_3d a, t_3d b)
 	t_3d	nm;
 
 	ratio = 0;
-	nm = v_i2d(shp.nm);
+	nm = shp.nm;
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	if (ABS(v_dscal(b, nm)) > 0.01)
 	{
@@ -53,7 +53,7 @@ t_3d	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 	double	b;
 	double	c;
 
-	nm = v_i2d(shp.nm);
+	nm = shp.nm;
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	b = 2 * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'),
 		v_dvop(v_dsop(nm, v_dscal(dp, nm), '*'), dp, '-'));
@@ -78,7 +78,7 @@ t_3d	intsec_cone(t_shp shp, t_3d dp, t_3d v)
 	double	b;
 	double	c;
 
-	nm = v_i2d(shp.nm);
+	nm = shp.nm;
 	nm = v_dsop(nm, 1.0 / v_dmod(nm), '*');
 	ratio = (double)SQ(shp.h) / (SQ(shp.h) + SQ(shp.l));
 	b = 2 * ratio * v_dscal(v_dvop(v, v_dsop(nm, v_dscal(v, nm), '*'), '-'),
@@ -105,7 +105,7 @@ t_3d	intersect(t_data *d, t_3d p1, t_3d p2, int n)
 	t_3d	a;
 	t_3d	b;
 
-	a = v_dd2v(p1, v_i2d(d->shps[n].o));
+	a = v_dd2v(p1, d->shps[n].o);
 	b = v_dd2v(p1, p2);
 	p = p1;
 	if (d->shps[n].id == 1 && v_dmodsq(b) > 0)

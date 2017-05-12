@@ -44,6 +44,7 @@ static int	ft_read_to_list(int fd, t_list **img_l, t_data *d)
 	line = NULL;
 	while ((ret = get_next_line(fd, &line)) > 0 &&
 		(ret = ft_chk_content(d, line)) >= 0)
+	{
 		if (ret > 0 && !(*img_l))
 		{
 			if (!(*img_l = ft_lstnew(line, ft_strlen(line) + 1)))
@@ -56,6 +57,8 @@ static int	ft_read_to_list(int fd, t_list **img_l, t_data *d)
 				ft_free_n_exit(d, img_l, line, -5);
 			tmp = tmp->next;
 		}
+		free(line);
+	}
 	(line) ? free(line) : 0;
 	(ret == -1) ? ft_free_n_exit(d, img_l, NULL, -10) : 0;
 	return (1);
@@ -91,6 +94,8 @@ int			ft_read(char *filename, t_data *d)
 	if ((fd = open(filename, O_RDONLY)) < 0)
 		ft_free_n_exit(d, &img_l, NULL, -4);
 	ft_read_to_list(fd, &img_l, d);
+	if (fd && close(fd))
+		ft_free_n_exit(d, &img_l, NULL, -6);
 	if (!((d->shps) = (t_shp*)ft_memalloc(sizeof(t_shp) * d->nshp)))
 		ft_free_n_exit(d, &img_l, NULL, -5);
 	if (!((d->lght) = (t_lght*)ft_memalloc(sizeof(t_lght) * d->nlght)))

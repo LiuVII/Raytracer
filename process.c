@@ -31,7 +31,7 @@ void	view_setup(t_data *d)
 {
 	t_3d	base;
 
-	base = v_i2d(v_id2v(d->pos, d->vwp));
+	base = v_dd2v(d->pos, d->vwp);
 	d->length = v_dmodsq(base);
 	if (base.x <= base.z)
 	{

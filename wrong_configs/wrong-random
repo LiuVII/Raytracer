@@ -1,0 +1,6 @@
+//depth pos.x pos.y pos.z vwp.x vwp.y vwp.z max_dist
+1 400 300 -600 400 300 0 100000
+
+//o.x o.y o.z spctr.x spctr.y spctr.z l I 
+400 300 0 255 255 255 10 2
+500 280 0 255 255 255 10 1200

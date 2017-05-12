@@ -78,8 +78,8 @@ typedef struct	s_3di
 typedef struct	s_shp
 {
 	int			id;
-	t_3di		o;
-	t_3di		nm;
+	t_3d		o;
+	t_3d		nm;
 	t_3d		ang;
 	int			l;
 	int			h;
@@ -90,9 +90,9 @@ typedef struct	s_shp
 
 typedef struct	s_lght
 {
-	t_3di		o;
+	t_3d		o;
 	t_3d		ang;
-	t_3di		spctr;
+	t_3d		spctr;
 	int			l;
 	int			in;
 }				t_lght;
@@ -113,8 +113,8 @@ typedef struct	s_img
 typedef struct	s_data
 {
 	int			depth;
-	t_3di		pos;
-	t_3di		vwp;
+	t_3d		pos;
+	t_3d		vwp;
 	double		length;
 	t_3d		***img;
 	t_3d		img_size;
