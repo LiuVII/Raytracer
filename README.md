@@ -32,6 +32,9 @@ For example
 
 Once run you'll see rendered 3d objects specified in config file.
 
+One of the sceneries you can observe in RTv1:
+![alt tag](Ultimate_scene.png)
+
 Controls displayed in your terminal for real-time raytracing (~2-4 FPS):
 movement with arrows (left-right, up-down) + 4,1 (Nums for depth), as well as rotations: 5,2 Nums and 6,3 Nums 
 
