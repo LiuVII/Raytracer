@@ -93,8 +93,8 @@ typedef struct	s_lght
 	t_3d		o;
 	t_3d		ang;
 	t_3d		spctr;
-	int			l;
-	int			in;
+	double		l;
+	double		in;
 }				t_lght;
 
 typedef struct	s_img
@@ -160,5 +160,6 @@ void			draw_mandelset(t_data *d, int iter);
 t_3d			ft_tr(t_data *d, t_3d p);
 int				get_color(double zmin, double zmax, double zmean, double z);
 int				hsv_rgb(float hue, float sat, float val);
+t_3d			get_normal(t_shp shp, t_3d p);
 
 #endif

@@ -63,7 +63,7 @@ t_3d	intsec_cylinder(t_shp shp, t_3d dp, t_3d v)
 	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
-		if ((ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1))
+		if ((ratio < 0 || v_dmodsq(v_dsop(v, ratio, '*')) < 1.1))
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
 		ratio = (ratio < 0) ? 0 : cap_cylinder(shp, dp, v, ratio);
 	}
@@ -92,7 +92,7 @@ t_3d	intsec_cone(t_shp shp, t_3d dp, t_3d v)
 	if (a > 0.01 && (ratio = SQ(b) - 4 * a * c) > 0.001)
 	{
 		ratio = (-b + SIGN(b) * sqrt(ratio)) / 2.0 / a;
-		if (ratio < 0 || v_imodsq(v_d2i(v_dsop(v, ratio, '*'))) < 1.1)
+		if (ratio < 0 || v_dmodsq(v_dsop(v, ratio, '*')) < 1.1)
 			ratio = (-b - SIGN(b) * sqrt(SQ(b) - 4 * a * c)) / 2.0 / a;
 		ratio = (ratio < 0) ? 0 : cap_cone(shp, dp, v, ratio);
 	}

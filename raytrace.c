@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "raytracer.h"
+#include <stdio.h>
 
 /*
 ** for each shape check if intersects path of light, return 0 color if any does
@@ -90,6 +91,8 @@ t_3di	trace_one(t_data *d, t_3d p, int i, int n)
 	t_3d	col;
 	t_3d	colinc;
 	t_3d	colgl;
+	double	ratio;
+	t_3d	norm;
 
 	col = v_dsop(p, 0, '=');
 	p = cast_primray(d, v_dvop(d->vwp, p, '+'), &n);
@@ -98,10 +101,14 @@ t_3di	trace_one(t_data *d, t_3d p, int i, int n)
 		{
 			colgl = v_dsop(colgl, 0, '=');
 			colinc = cast_shadray(d, (p), d->lght[i], 1);
+			norm = get_normal(d->shps[n], p);
+			ratio = v_dscal(norm, v_dd2v(p, d->lght[i].o))\
+			/ v_dmod(v_dd2v(p, d->lght[i].o)) / v_dmod(norm);
+			colinc = v_dsop(colinc, ratio, '*');
 			if (d->shps[n].n > 1.01 && v_dmodsq(colinc) > 1 && i > 0)
 				colgl = add_gloss(v_dd2v(p, d->pos),
 					p, d->lght[i], d->shps[n]);
-			col = v_dvop(col, colgl, '+');
+			col = v_dvop(col, v_dsop(colgl, ratio, '*'), '+');
 			col.x = col.x + colinc.x * (1.0 - d->shps[n].mu.x);
 			col.x = (col.x > 255) ? 255 : col.x;
 			col.y = col.y + colinc.y * (1.0 - d->shps[n].mu.y);
